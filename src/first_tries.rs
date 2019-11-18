@@ -46,6 +46,21 @@ pub mod tutorial{
         active: bool,
     }
 
+    pub struct Rectangle {
+        width: u32,
+        height: u32
+    }
+
+    impl Rectangle {
+        fn area(&self) -> u32 {
+            self.width * self.height
+        }
+
+        fn can_hold(&self, other: &Rectangle) -> bool {
+            self.width > other.width && self.height > other.height
+        }
+    }
+
     pub fn structs(){
 
         let mut user1 = User {
@@ -56,10 +71,39 @@ pub mod tutorial{
         };
 
         user1.email = String::from("info@alvanklaveren.com");
-
         println!("User: {} - email: {}", user1.username, user1.email);
+
+        let user2 = build_user(String::from("harry@harry.com"), String::from("Harry"));
+        println!("User: {} - email: {}", user2.username, user2.email);
+
+        let user3 = User {
+            email: String::from("different@emailaddress.com"),
+            ..user2 // copies the remainder of fields from user2
+        };
+        println!("User: {} - email: {}", user3.username, user3.email);
+
+        // you can also use a struct without names, for instance to bundle something returned from a function
+        struct FunctionResult(i32, i32, i32);
+        let result = FunctionResult(43,178,0);
+        println!("Age:{} Length (cm):{}, # of Children:{}",result.0, result.1, result.2);
+
+        // now we implement a method IN the struct (sort of like how a class is both a struct AND method prototype
+        let rect1 = Rectangle { width: 30, height: 50 };
+        println!("The area of the rectangle is {} square pixels.", rect1.area());
+        let rect2 = Rectangle { width: 20, height: 20 };
+        let rect3 = Rectangle { width: 40, height: 50 };
+        println!("Can rect1 hold rect2 ? {}", rect1.can_hold(&rect2));
+        println!("Can rect1 hold rect3 ? {}", rect1.can_hold(&rect3));
     }
 
+    fn build_user(email: String, username: String) -> User {
+        User {
+            email,
+            username,
+            active: true,
+            sign_in_count: 1,
+        }
+    }
     pub fn string_slice(){
         let s = "hello you!";
 
