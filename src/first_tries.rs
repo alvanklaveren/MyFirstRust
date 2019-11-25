@@ -7,6 +7,7 @@ pub mod tutorial{
     use std::io;
     use std::cmp::Ordering;
     use rand::Rng;
+    use crate::first_tries::tutorial::Coin::Penny;
 
     pub fn guessing_game() {
         println!("Guess the number!");
@@ -94,6 +95,52 @@ pub mod tutorial{
         let rect3 = Rectangle { width: 40, height: 50 };
         println!("Can rect1 hold rect2 ? {}", rect1.can_hold(&rect2));
         println!("Can rect1 hold rect3 ? {}", rect1.can_hold(&rect3));
+    }
+
+    enum Coin {
+        Penny,
+        Nickel,
+        Dime,
+        Quarter,
+    }
+
+    impl Coin {
+        fn value_in_cents(&self) -> u8 {
+            match &self {
+            Coin::Penny => 1,
+            Coin::Nickel => 5,
+            Coin::Dime => 10,
+            Coin::Quarter => 25,
+            }
+        }
+        fn description(&self) -> &str {
+            match &self {
+                Coin::Penny => "Penny",
+                Coin::Nickel => "Nickel",
+                Coin::Dime => "Dime",
+                Coin::Quarter => "Quarter",
+            }
+        }
+    }
+    pub fn enums(){
+        println!("{} = {} cents", Penny.description(), Penny.value_in_cents());
+    }
+
+    pub fn if_let(){
+        let some_u8_value = Some(0u8);
+        let three = Some(3);
+
+        // without if-let
+        match three {
+            Some(3) => println!("three"),
+            _ => (),
+        }
+
+        // the same, but with if-let
+        if let Some(3) = three {
+            println!("three");
+        } else {
+        }
     }
 
     fn build_user(email: String, username: String) -> User {

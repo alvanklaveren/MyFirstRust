@@ -1,5 +1,5 @@
 [package]
-name = "MyFirstRust"
+name = "my-first-rust"
 version = "0.1.0"
 authors = ["AVK info@alvanklaveren.com"]
 edition = "2018"
