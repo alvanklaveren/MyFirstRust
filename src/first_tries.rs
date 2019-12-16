@@ -5,9 +5,47 @@
 pub mod tutorial{
 
     use std::io;
-    use std::cmp::Ordering;
+    use std::io::Read;
     use rand::Rng;
-    use crate::first_tries::tutorial::Coin::Penny;
+    use std::cmp::Ordering;
+    use std::collections::HashMap;
+    use std::collections::hash_map::RandomState;
+
+    use std::fs::File;
+
+    pub fn error_handling_panic() {
+        let f = File::open("hello.txt");
+
+        let f = match f {
+            Ok(file) => file,
+            Err(error) => {
+                panic!("Problem opening the file: {:?}", error)
+            },
+        };
+
+        // shortcut, also calls panic!
+        let f = File::open("hello.txt").unwrap();
+
+        // shortcut, also calls panic!, with message
+        let f = File::open("hello.txt").expect("Failed to open hello.txt");
+    }
+
+    // shows how a Result works (erorrhandling)
+    pub fn read_username_from_file() -> Result<String, io::Error> {
+        let f = File::open("hello.txt");
+
+        let mut f = match f {
+            Ok(file) => file,
+            Err(e) => return Err(e),
+        };
+
+        let mut s = String::new();
+
+        match f.read_to_string(&mut s) {
+            Ok(_) => Ok(s),
+            Err(e) => Err(e),
+        }
+    }
 
     pub fn guessing_game() {
         println!("Guess the number!");
@@ -97,33 +135,35 @@ pub mod tutorial{
         println!("Can rect1 hold rect3 ? {}", rect1.can_hold(&rect3));
     }
 
-    enum Coin {
-        Penny,
-        Nickel,
-        Dime,
-        Quarter,
-    }
 
-    impl Coin {
-        fn value_in_cents(&self) -> u8 {
-            match &self {
-            Coin::Penny => 1,
-            Coin::Nickel => 5,
-            Coin::Dime => 10,
-            Coin::Quarter => 25,
-            }
-        }
-        fn description(&self) -> &str {
-            match &self {
-                Coin::Penny => "Penny",
-                Coin::Nickel => "Nickel",
-                Coin::Dime => "Dime",
-                Coin::Quarter => "Quarter",
-            }
-        }
-    }
     pub fn enums(){
-        println!("{} = {} cents", Penny.description(), Penny.value_in_cents());
+        enum Coin {
+            Penny,
+            Nickel,
+            Dime,
+            Quarter,
+        }
+
+        impl Coin {
+            fn value_in_cents(&self) -> u8 {
+                match &self {
+                    Coin::Penny => 1,
+                    Coin::Nickel => 5,
+                    Coin::Dime => 10,
+                    Coin::Quarter => 25,
+                }
+            }
+            fn description(&self) -> &str {
+                match &self {
+                    Coin::Penny => "Penny",
+                    Coin::Nickel => "Nickel",
+                    Coin::Dime => "Dime",
+                    Coin::Quarter => "Quarter",
+                }
+            }
+        }
+
+        println!("{} = {} cents", Coin::Penny.description(), Coin::Penny.value_in_cents());
     }
 
     pub fn if_let(){
@@ -185,6 +225,57 @@ pub mod tutorial{
         }
 
         &s[..] // or just &s
+    }
+
+    pub fn strings_and_hash_maps(){
+        let s = "alex";
+        let s1 = String::from(s);
+        let s2 = "this is also possible to create a String".to_string();
+        let an_utf8_string = String::from("Здравствуйте");
+
+        // you can also "use" within a function
+        use std::collections::HashMap;
+
+        //this is a scores hashmap
+        let mut scores = HashMap::new();
+        scores.insert(String::from("Blue"), 10);
+        scores.insert(String::from("Yellow"), 50);
+
+        // you can also build the hashmap using vectors.
+        let teams  = vec![String::from("Blue"), String::from("Yellow")];
+        let initial_scores = vec![10, 50];
+        let scores: HashMap<_, _> = teams.iter().zip(initial_scores.iter()).collect();
+
+        let team_name = String::from("Blue");
+        let score = scores.get(&team_name);
+        println!("{:?}", score);
+
+        for (key, value) in &scores {
+            println!("{}: {}", key, value);
+        }
+
+        // the below will use "entry" to insert a key/value pair only when it does not exist yet
+        let mut scores = HashMap::new();
+        scores.insert(String::from("Blue"), 10);
+
+        scores.entry(String::from("Yellow")).or_insert(50);
+        scores.entry(String::from("Blue")).or_insert(50);
+
+        println!("{:?}", scores);
+    }
+
+    pub fn count_words(text:&str){
+
+        let mut map = HashMap::new();
+
+        let alt_text = text.replace(",", "").replace(".","");
+
+        for word in alt_text.split_whitespace() {
+            let count = map.entry(word).or_insert(0);
+            *count += 1;
+        }
+
+        println!("{:?}", map);
     }
 
     pub fn borrowing_test() {
